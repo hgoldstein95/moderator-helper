@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "summary": "A mafia moderator tool.",
-    "repository": "https://github.com/hgoldstein95/dummy-repo.git",
+    "repository": "https://github.com/hgoldstein95/moderator-helper.git",
     "license": "None",
     "source-directories": [
         "src"
