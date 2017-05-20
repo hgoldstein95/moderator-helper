@@ -4,25 +4,23 @@ import Model exposing (..)
 
 
 type Msg
-    = Changed String
-    | Reset
-    | Add
+    = ToCreate
+    | ToNight
+    | ToDay
+    | ToEnd
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Changed word ->
-            ( { model | curr = word }, Cmd.none )
+        ToCreate ->
+            ( { model | viewState = Create }, Cmd.none )
 
-        Reset ->
-            ( { model | items = [], curr = "" }, Cmd.none )
+        ToNight ->
+            ( { model | viewState = Night }, Cmd.none )
 
-        Add ->
-            ( { model
-                | items = model.items ++ [ item model.uid model.curr ]
-                , curr = ""
-                , uid = model.uid + 1
-              }
-            , Cmd.none
-            )
+        ToDay ->
+            ( { model | viewState = Day }, Cmd.none )
+
+        ToEnd ->
+            ( { model | viewState = End }, Cmd.none )

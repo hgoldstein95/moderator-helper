@@ -1,24 +1,19 @@
 module Model exposing (..)
 
 
-type alias Item =
-    { id : Int
-    , content : String
-    }
-
-
-item : Int -> String -> Item
-item n s =
-    Item n s
+type ViewState
+    = Create
+    | Night
+    | Day
+    | End
 
 
 type alias Model =
     { uid : Int
-    , curr : String
-    , items : List Item
+    , viewState : ViewState
     }
 
 
 init : ( Model, Cmd msg )
 init =
-    ( Model 0 "" [], Cmd.none )
+    ( Model 0 Create, Cmd.none )
