@@ -32,33 +32,52 @@ view model =
         ]
 
 
+roleButton : Model -> Role -> Html Msg
+roleButton model x =
+    let
+        count =
+            List.filter (\p -> p.role == x) model.setup |> List.length
+    in
+        button
+            [ onClick (AddPlayer x) ]
+            [ text <| roleToString x ++ " (" ++ toString count ++ ")" ]
+
+
 viewCreate : Model -> Html Msg
 viewCreate model =
     div []
-        [ text "Create"
-        , button [ onClick ToNight ] [ text "To Night" ]
+        [ h2 [] [ text "Create" ]
+        , div []
+            (List.map (roleButton model) allRoles)
+        , button [ onClick ToNight ] [ text "Start game!" ]
         ]
 
 
 viewNight : Model -> Html Msg
 viewNight model =
     div []
-        [ text "Night"
-        , button [ onClick ToDay ] [ text "To Day" ]
+        [ h2 [] [ text "Night" ]
+        , button [ onClick ToDay ] [ text "In the morning..." ]
+        , button [ onClick Reset ] [ text "Game Over" ]
+        , ul []
+            (List.map (\x -> li [] [ text (roleToString x.role) ]) model.setup)
         ]
 
 
 viewDay : Model -> Html Msg
 viewDay model =
     div []
-        [ text "Day"
-        , button [ onClick ToEnd ] [ text "To End" ]
+        [ h2 [] [ text "Day" ]
+        , button [ onClick ToNight ] [ text "Go to sleep." ]
+        , button [ onClick Reset ] [ text "Game Over" ]
+        , ul []
+            (List.map (\x -> li [] [ text (roleToString x.role) ]) model.setup)
         ]
 
 
 viewEnd : Model -> Html Msg
 viewEnd model =
     div []
-        [ text "End"
-        , button [ onClick ToCreate ] [ text "To Start" ]
+        [ h2 [] [ text "End" ]
+        , button [ onClick ToCreate ] [ text "New game." ]
         ]

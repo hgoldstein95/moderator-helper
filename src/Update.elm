@@ -5,9 +5,10 @@ import Model exposing (..)
 
 type Msg
     = ToCreate
+    | AddPlayer Role
     | ToNight
     | ToDay
-    | ToEnd
+    | Reset
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -16,11 +17,19 @@ update msg model =
         ToCreate ->
             ( { model | viewState = Create }, Cmd.none )
 
+        AddPlayer role ->
+            ( { model
+                | setup = model.setup ++ [ Player model.uid role ]
+                , uid = model.uid + 1
+              }
+            , Cmd.none
+            )
+
         ToNight ->
             ( { model | viewState = Night }, Cmd.none )
 
         ToDay ->
             ( { model | viewState = Day }, Cmd.none )
 
-        ToEnd ->
-            ( { model | viewState = End }, Cmd.none )
+        Reset ->
+            ( { model | viewState = End, setup = [] }, Cmd.none )
