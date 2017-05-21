@@ -32,19 +32,20 @@ view model =
         ]
 
 
-roleButton : Role -> Html Msg
-roleButton role =
-    button
-        [ onClick (AddRole role) ]
-        [ text (toString role) ]
+roleInput : Role -> Html Msg
+roleInput role =
+    div []
+        [ span [] [ text (toString role) ]
+        , button [ onClick (IncRole role) ] [ text "+" ]
+        , button [ onClick (DecRole role) ] [ text "-" ]
+        ]
 
 
 viewCreate : Model -> Html Msg
 viewCreate model =
     div []
         [ h2 [] [ text "Create" ]
-        , div []
-            (List.map roleButton allRoles)
+        , div [] (List.map roleInput allRoles)
         , button [ onClick ToNight ] [ text "Start game!" ]
         , text (toString model.setup)
         ]

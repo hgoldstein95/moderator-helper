@@ -9,7 +9,26 @@ type Msg
     | ToNight
     | ToDay
     | EndGame
-    | AddRole Role
+    | IncRole Role
+    | DecRole Role
+
+
+modifyRole : Int -> Role -> Model -> Model
+modifyRole n role model =
+    let
+        r =
+            toString role
+
+        count =
+            Maybe.withDefault 0 (Dict.get r model.setup)
+
+        newVal =
+            if count + n >= 0 then
+                count + n
+            else
+                count
+    in
+        { model | setup = Dict.insert r newVal model.setup }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -27,16 +46,8 @@ update msg model =
         EndGame ->
             ( { model | viewState = End }, Cmd.none )
 
-        AddRole role ->
-            let
-                r =
-                    toString role
+        IncRole role ->
+            ( modifyRole 1 role model, Cmd.none )
 
-                count =
-                    Maybe.withDefault 0 (Dict.get r model.setup)
-            in
-                ( { model
-                    | setup = Dict.insert r (count + 1) model.setup
-                  }
-                , Cmd.none
-                )
+        DecRole role ->
+            ( modifyRole (-1) role model, Cmd.none )
