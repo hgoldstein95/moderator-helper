@@ -12,10 +12,5 @@ main =
         { init = init
         , view = view
         , update = update
-        , subscriptions = subscriptions
+        , subscriptions = always Sub.none
         }
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
