@@ -52,6 +52,33 @@ makePlayers d =
         |> List.indexedMap (\i x -> Player i x)
 
 
+visitList : List ( Player, Player, Action ) -> List ( Player, List Action )
+visitList l =
+    case l of
+        [] ->
+            []
+
+        ( r, _, act ) :: ps ->
+            let
+                ( match, rest ) =
+                    List.partition (\( x, _, _ ) -> r.id == x.id) ps
+            in
+                ( r, act :: (List.map (\( _, _, x ) -> x) match) )
+                    :: visitList rest
+
+
+makeAnnouncements : List ( Player, Player, Action ) -> List Outcome
+makeAnnouncements visits =
+    visitList visits
+        |> List.filterMap
+            (\( p, acts ) ->
+                if List.member Kill acts && not (List.member Save acts) then
+                    Just <| Dead p
+                else
+                    Nothing
+            )
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -71,12 +98,18 @@ update msg model =
             ( { model
                 | state = Night
                 , visited = []
+                , announcements = []
               }
             , Cmd.none
             )
 
         ToDay ->
-            ( { model | state = Day }, Cmd.none )
+            ( { model
+                | state = Day
+                , announcements = makeAnnouncements model.visited
+              }
+            , Cmd.none
+            )
 
         EndGame ->
             ( { model | state = End }, Cmd.none )

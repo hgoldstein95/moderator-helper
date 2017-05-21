@@ -36,6 +36,10 @@ type alias Role =
     }
 
 
+type Outcome
+    = Dead Player
+
+
 roles : Dict String Role
 roles =
     Dict.empty
@@ -53,9 +57,10 @@ type alias Model =
     , players : List Player
     , visiting : Maybe ( Player, Action )
     , visited : List ( Player, Player, Action )
+    , announcements : List Outcome
     }
 
 
 init : ( Model, Cmd msg )
 init =
-    ( Model 0 Create Dict.empty [] Nothing [], Cmd.none )
+    ( Model 0 Create Dict.empty [] Nothing [] [], Cmd.none )

@@ -105,33 +105,6 @@ viewNight model =
         ]
 
 
-visitList : List ( Player, Player, Action ) -> List ( Player, List Action )
-visitList l =
-    case l of
-        [] ->
-            []
-
-        ( r, _, act ) :: ps ->
-            let
-                ( match, rest ) =
-                    List.partition (\( x, _, _ ) -> r.id == x.id) ps
-            in
-                ( r, act :: (List.map (\( _, _, x ) -> x) match) )
-                    :: visitList rest
-
-
-makeAnnouncements : List ( Player, Player, Action ) -> List String
-makeAnnouncements visits =
-    visitList visits
-        |> List.filterMap
-            (\( p, acts ) ->
-                if List.member Kill acts && not (List.member Save acts) then
-                    Just <| (toString p) ++ " is Dead"
-                else
-                    Nothing
-            )
-
-
 viewDay : Model -> Html Msg
 viewDay model =
     div []
@@ -140,8 +113,8 @@ viewDay model =
         , button [ onClick EndGame ] [ text "Game Over" ]
         , h3 [] [ text "Announcements" ]
         , ul []
-            (makeAnnouncements model.visited
-                |> List.map (\x -> li [] [ text x ])
+            (model.announcements
+                |> List.map (\x -> li [] [ text (toString x) ])
             )
         ]
 
