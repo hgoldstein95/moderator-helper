@@ -15,7 +15,6 @@ type Msg
     | DecRole Role
     | Act Player Action
     | Visit Player
-    | RemoveVisit ( Player, Player, Action )
 
 
 incrRole : Role -> Dict String Int -> Dict String Int
@@ -45,12 +44,27 @@ decrRole role d =
         Dict.insert role.name newVal d
 
 
-makePlayers : Dict String Int -> List Player
+makePlayers : Dict String Int -> Dict Int Player
 makePlayers d =
     Dict.toList d
         |> List.concatMap (\( r, n ) -> List.repeat n r)
         |> List.filterMap (\r -> Dict.get r roles)
-        |> List.indexedMap (\i x -> Player i x)
+        |> List.indexedMap (\i x -> ( i, Player i x ))
+        |> Dict.fromList
+
+
+addVisit :
+    Player
+    -> Player
+    -> Action
+    -> Dict Int (List ( Player, Action ))
+    -> Dict Int (List ( Player, Action ))
+addVisit t s act v =
+    let
+        curr =
+            Maybe.withDefault [] (Dict.get t.id v)
+    in
+        Dict.insert t.id (( s, act ) :: curr) v
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -71,7 +85,7 @@ update msg model =
         ToNight ->
             ( { model
                 | state = Night
-                , visited = []
+                , visited = Dict.empty
                 , announcements = []
               }
             , Cmd.none
@@ -80,7 +94,7 @@ update msg model =
         ToDay ->
             ( { model
                 | state = Day
-                , announcements = getOutcomes model.visited
+                , announcements = getOutcomes model.players model.visited
               }
             , Cmd.none
             )
@@ -119,14 +133,7 @@ update msg model =
                 Just ( p, act ) ->
                     { model
                         | visiting = Nothing
-                        , visited = model.visited ++ [ ( player, p, act ) ]
+                        , visited = addVisit player p act model.visited
                     }
-            , Cmd.none
-            )
-
-        RemoveVisit badAct ->
-            ( { model
-                | visited = List.filter (\act -> act /= badAct) model.visited
-              }
             , Cmd.none
             )

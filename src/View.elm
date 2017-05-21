@@ -93,19 +93,22 @@ playerItem model p =
 showVisited : Model -> Html Msg
 showVisited model =
     ul [] <|
-        List.map
-            (\( t, s, a ) ->
-                li
-                    [ onClick (RemoveVisit ( t, s, a )) ]
-                    [ text <|
-                        (toString s.id)
-                            ++ " -"
-                            ++ (toString a)
-                            ++ "-> "
-                            ++ (toString t.id)
-                    ]
+        List.concatMap
+            (\( id, l ) ->
+                List.map
+                    (\( s, a ) ->
+                        li []
+                            [ text <|
+                                (toString s.id)
+                                    ++ " -"
+                                    ++ (toString a)
+                                    ++ "-> "
+                                    ++ (toString id)
+                            ]
+                    )
+                    l
             )
-            model.visited
+            (Dict.toList model.visited)
 
 
 viewNight : Model -> Html Msg
@@ -114,7 +117,7 @@ viewNight model =
         [ h2 [] [ text "Night" ]
         , button [ onClick ToDay ] [ text "In the morning..." ]
         , button [ onClick EndGame ] [ text "Game Over" ]
-        , ul [] (List.map (playerItem model) model.players)
+        , ul [] (List.map (playerItem model) (Dict.values model.players))
         , showVisited model
         ]
 

@@ -14,30 +14,23 @@ roles =
         |> Dict.insert "Godfather" (Role "Godfather" True M [ Kill ])
 
 
-visitList : List ( Player, Player, Action ) -> List ( Player, List Action )
-visitList l =
-    case l of
-        [] ->
-            []
-
-        ( r, _, act ) :: ps ->
-            let
-                ( match, rest ) =
-                    List.partition (\( x, _, _ ) -> r.id == x.id) ps
-
-                actList =
-                    act :: (List.map (\( _, _, x ) -> x) match)
-            in
-                ( r, actList ) :: visitList rest
-
-
-getOutcomes : List ( Player, Player, Action ) -> List Outcome
-getOutcomes visits =
-    visitList visits
+getOutcomes :
+    Dict Int Player
+    -> Dict Int (List ( Player, Action ))
+    -> List Outcome
+getOutcomes players visits =
+    Dict.toList visits
         |> List.filterMap
-            (\( p, acts ) ->
-                if List.member Kill acts && not (List.member Save acts) then
-                    Just (Dead p)
-                else
-                    Nothing
+            (\( id, vs ) ->
+                let
+                    acts =
+                        List.map Tuple.second vs
+                in
+                    if
+                        List.member Kill acts
+                            && not (List.member Save acts)
+                    then
+                        Maybe.map Dead (Dict.get id players)
+                    else
+                        Nothing
             )

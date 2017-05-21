@@ -43,13 +43,22 @@ type alias Model =
     { uid : Int
     , state : ViewState
     , setup : Dict String Int
-    , players : List Player
+    , players : Dict Int Player
     , visiting : Maybe ( Player, Action )
-    , visited : List ( Player, Player, Action )
+    , visited : Dict Int (List ( Player, Action ))
     , announcements : List Outcome
     }
 
 
 init : ( Model, Cmd msg )
 init =
-    ( Model 0 Create Dict.empty [] Nothing [] [], Cmd.none )
+    ( Model
+        0
+        Create
+        Dict.empty
+        Dict.empty
+        Nothing
+        Dict.empty
+        []
+    , Cmd.none
+    )
