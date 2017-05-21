@@ -32,11 +32,21 @@ view model =
         ]
 
 
+roleButton : Role -> Html Msg
+roleButton role =
+    button
+        [ onClick (AddRole role) ]
+        [ text (toString role) ]
+
+
 viewCreate : Model -> Html Msg
 viewCreate model =
     div []
         [ h2 [] [ text "Create" ]
+        , div []
+            (List.map roleButton allRoles)
         , button [ onClick ToNight ] [ text "Start game!" ]
+        , text (toString model.setup)
         ]
 
 
@@ -45,7 +55,7 @@ viewNight model =
     div []
         [ h2 [] [ text "Night" ]
         , button [ onClick ToDay ] [ text "In the morning..." ]
-        , button [ onClick Reset ] [ text "Game Over" ]
+        , button [ onClick EndGame ] [ text "Game Over" ]
         ]
 
 
@@ -54,7 +64,7 @@ viewDay model =
     div []
         [ h2 [] [ text "Day" ]
         , button [ onClick ToNight ] [ text "Go to sleep." ]
-        , button [ onClick Reset ] [ text "Game Over" ]
+        , button [ onClick EndGame ] [ text "Game Over" ]
         ]
 
 
@@ -62,5 +72,5 @@ viewEnd : Model -> Html Msg
 viewEnd model =
     div []
         [ h2 [] [ text "End" ]
-        , button [ onClick ToCreate ] [ text "New game." ]
+        , button [ onClick Reset ] [ text "New game." ]
         ]
