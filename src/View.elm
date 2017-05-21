@@ -68,7 +68,7 @@ playerItem p =
             [ div []
                 ([ span
                     [ onClick (Visit p) ]
-                    [ text p.role.name ]
+                    [ text <| (toString p.id) ++ " " ++ p.role.name ]
                  ]
                     ++ actBtns p.role.actions
                 )
@@ -80,7 +80,15 @@ showVisited model =
     ul [] <|
         List.map
             (\( t, s, a ) ->
-                li [] [ text <| (toString t) ++ " -> " ++ (toString t) ]
+                li
+                    [ onClick (RemoveVisit ( t, s, a )) ]
+                    [ text <|
+                        (toString s.id)
+                            ++ " -"
+                            ++ (toString a)
+                            ++ "-> "
+                            ++ (toString t.id)
+                    ]
             )
             model.visited
 

@@ -14,6 +14,7 @@ type Msg
     | DecRole Role
     | Act Player Action
     | Visit Player
+    | RemoveVisit ( Player, Player, Action )
 
 
 incrRole : Role -> Dict String Int -> Dict String Int
@@ -93,12 +94,13 @@ update msg model =
         Act player action ->
             ( case model.visiting of
                 Nothing ->
-                    { model
-                        | visiting = Just ( player, action )
-                    }
+                    { model | visiting = Just ( player, action ) }
 
-                Just _ ->
-                    model
+                Just ( p, act ) ->
+                    if p.id == player.id then
+                        { model | visiting = Nothing }
+                    else
+                        { model | visiting = Just ( player, action ) }
             , Cmd.none
             )
 
@@ -112,5 +114,12 @@ update msg model =
                         | visiting = Nothing
                         , visited = ( player, p, act ) :: model.visited
                     }
+            , Cmd.none
+            )
+
+        RemoveVisit badAct ->
+            ( { model
+                | visited = List.filter (\act -> act /= badAct) model.visited
+              }
             , Cmd.none
             )
