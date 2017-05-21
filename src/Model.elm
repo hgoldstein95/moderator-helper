@@ -19,7 +19,6 @@ type alias Player =
 type Alignment
     = T
     | M
-    | X
 
 
 type Action
@@ -38,16 +37,6 @@ type alias Role =
 
 type Outcome
     = Dead Player
-
-
-roles : Dict String Role
-roles =
-    Dict.empty
-        |> Dict.insert "Townie" (Role "Townie" False T [])
-        |> Dict.insert "Sheriff" (Role "Sheriff" True T [ Check ])
-        |> Dict.insert "Doctor" (Role "Doctor" True T [ Save ])
-        |> Dict.insert "Mafia" (Role "Mafia" False M [ Kill ])
-        |> Dict.insert "Godfather" (Role "Godfather" True M [ Kill ])
 
 
 type alias Model =

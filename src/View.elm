@@ -6,6 +6,7 @@ import Html.Events exposing (..)
 import Dict exposing (Dict)
 import Model exposing (..)
 import Update exposing (..)
+import Mafia exposing (..)
 
 
 view : Model -> Html Msg
@@ -52,23 +53,37 @@ viewCreate model =
         ]
 
 
-playerItem : Player -> Html Msg
-playerItem p =
+playerItem : Model -> Player -> Html Msg
+playerItem model p =
     let
         actBtns acts =
             List.map
-                (\a ->
-                    button
-                        [ onClick (Act p a) ]
-                        [ text (toString a) ]
-                )
+                (\a -> button [ onClick (Act p a) ] [ text (toString a) ])
                 acts
+
+        isVisiting =
+            case model.visiting of
+                Nothing ->
+                    False
+
+                Just ( play, _ ) ->
+                    p.id == play.id
+
+        attrs =
+            onClick (Visit p)
+                :: if isVisiting then
+                    [ style [ ( "color", "red" ) ] ]
+                   else
+                    []
     in
         li []
             [ div []
-                ([ span
-                    [ onClick (Visit p) ]
-                    [ text <| (toString p.id) ++ " " ++ p.role.name ]
+                ([ span attrs
+                    [ text <|
+                        (toString p.id)
+                            ++ " "
+                            ++ p.role.name
+                    ]
                  ]
                     ++ actBtns p.role.actions
                 )
@@ -99,8 +114,7 @@ viewNight model =
         [ h2 [] [ text "Night" ]
         , button [ onClick ToDay ] [ text "In the morning..." ]
         , button [ onClick EndGame ] [ text "Game Over" ]
-        , ul [] (List.map playerItem model.players)
-        , span [] [ text (toString model.visiting) ]
+        , ul [] (List.map (playerItem model) model.players)
         , showVisited model
         ]
 
