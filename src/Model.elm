@@ -10,26 +10,30 @@ type ViewState
     | End
 
 
-type Role
-    = Townie
-    | Sheriff
-    | Doctor
-    | Mafia
-    | Godfather
+type alias Player =
+    { id : Int
+    , role : String
+    }
 
 
-allRoles : List Role
-allRoles =
-    [ Townie, Sheriff, Doctor, Mafia, Godfather ]
+roles : List String
+roles =
+    [ "Townie"
+    , "Sheriff"
+    , "Doctor"
+    , "Mafia"
+    , "Godfather"
+    ]
 
 
 type alias Model =
     { uid : Int
-    , viewState : ViewState
+    , state : ViewState
     , setup : Dict String Int
+    , players : List Player
     }
 
 
 init : ( Model, Cmd msg )
 init =
-    ( Model 0 Create Dict.empty, Cmd.none )
+    ( Model 0 Create Dict.empty [], Cmd.none )

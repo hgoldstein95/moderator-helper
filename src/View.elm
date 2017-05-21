@@ -17,7 +17,7 @@ view model =
             ]
         ]
         [ h1 [] [ text "Mafia App" ]
-        , case model.viewState of
+        , case model.state of
             Create ->
                 viewCreate model
 
@@ -32,10 +32,10 @@ view model =
         ]
 
 
-roleInput : Role -> Html Msg
+roleInput : String -> Html Msg
 roleInput role =
     div []
-        [ span [] [ text (toString role) ]
+        [ span [] [ text role ]
         , button [ onClick (IncRole role) ] [ text "+" ]
         , button [ onClick (DecRole role) ] [ text "-" ]
         ]
@@ -45,8 +45,8 @@ viewCreate : Model -> Html Msg
 viewCreate model =
     div []
         [ h2 [] [ text "Create" ]
-        , div [] (List.map roleInput allRoles)
-        , button [ onClick ToNight ] [ text "Start game!" ]
+        , div [] (List.map roleInput roles)
+        , button [ onClick Start ] [ text "Start game!" ]
         , text (toString model.setup)
         ]
 
@@ -57,6 +57,7 @@ viewNight model =
         [ h2 [] [ text "Night" ]
         , button [ onClick ToDay ] [ text "In the morning..." ]
         , button [ onClick EndGame ] [ text "Game Over" ]
+        , span [] [ text (toString model.players) ]
         ]
 
 

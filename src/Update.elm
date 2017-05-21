@@ -6,21 +6,19 @@ import Model exposing (..)
 
 type Msg
     = Reset
+    | Start
     | ToNight
     | ToDay
     | EndGame
-    | IncRole Role
-    | DecRole Role
+    | IncRole String
+    | DecRole String
 
 
-modifyRole : Int -> Role -> Model -> Model
+modifyRole : Int -> String -> Model -> Model
 modifyRole n role model =
     let
-        r =
-            toString role
-
         count =
-            Maybe.withDefault 0 (Dict.get r model.setup)
+            Maybe.withDefault 0 (Dict.get role model.setup)
 
         newVal =
             if count + n >= 0 then
@@ -28,23 +26,38 @@ modifyRole n role model =
             else
                 count
     in
-        { model | setup = Dict.insert r newVal model.setup }
+        { model | setup = Dict.insert role newVal model.setup }
+
+
+makePlayers : Dict String Int -> List Player
+makePlayers d =
+    Dict.toList d
+        |> List.concatMap (\( r, n ) -> List.repeat n r)
+        |> List.indexedMap (\i x -> Player i x)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Reset ->
-            ( { model | viewState = Create, setup = Dict.empty }, Cmd.none )
+            init
+
+        Start ->
+            ( { model
+                | state = Night
+                , players = makePlayers model.setup
+              }
+            , Cmd.none
+            )
 
         ToNight ->
-            ( { model | viewState = Night }, Cmd.none )
+            ( { model | state = Night }, Cmd.none )
 
         ToDay ->
-            ( { model | viewState = Day }, Cmd.none )
+            ( { model | state = Day }, Cmd.none )
 
         EndGame ->
-            ( { model | viewState = End }, Cmd.none )
+            ( { model | state = End }, Cmd.none )
 
         IncRole role ->
             ( modifyRole 1 role model, Cmd.none )
