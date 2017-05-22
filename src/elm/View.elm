@@ -34,11 +34,16 @@ view model =
         ]
 
 
-roleInput : Role -> Html Msg
-roleInput role =
+roleInput : Model -> Role -> Html Msg
+roleInput model role =
     div []
         [ span [] [ text role.name ]
         , button [ onClick (IncRole role) ] [ text "+" ]
+        , span []
+            [ Maybe.withDefault 0 (Dict.get role.name model.setup)
+                |> toString
+                |> text
+            ]
         , button [ onClick (DecRole role) ] [ text "-" ]
         ]
 
@@ -47,9 +52,8 @@ viewCreate : Model -> Html Msg
 viewCreate model =
     div []
         [ h2 [] [ text "Create" ]
-        , div [] (List.map roleInput <| Dict.values roles)
+        , div [] (List.map (roleInput model) (Dict.values roles))
         , button [ onClick Start ] [ text "Start game!" ]
-        , text (toString model.setup)
         ]
 
 
@@ -72,7 +76,7 @@ playerItem model p =
         attrs =
             onClick (Visit p)
                 :: (if isVisiting then
-                        [ style [ ( "color", "red" ) ] ]
+                        [ class "visiting" ]
                     else
                         []
                    )
