@@ -36,15 +36,22 @@ view model =
 
 roleInput : Model -> Role -> Html Msg
 roleInput model role =
-    div []
-        [ span [] [ text role.name ]
-        , button [ onClick (IncRole role) ] [ text "+" ]
-        , span []
-            [ Maybe.withDefault 0 (Dict.get role.name model.setup)
-                |> toString
-                |> text
+    ul
+        [ class "role-list" ]
+        [ li
+            [ class "role-item" ]
+            [ text role.name
+            , span
+                [ class "role-modifier" ]
+                [ button [ onClick (IncRole role) ] [ text "+" ]
+                , span []
+                    [ Maybe.withDefault 0 (Dict.get role.name model.setup)
+                        |> toString
+                        |> text
+                    ]
+                , button [ onClick (DecRole role) ] [ text "-" ]
+                ]
             ]
-        , button [ onClick (DecRole role) ] [ text "-" ]
         ]
 
 
@@ -62,7 +69,13 @@ playerItem model p =
     let
         actBtns =
             List.map
-                (\a -> button [ onClick (Act p a) ] [ text (toString a) ])
+                (\a ->
+                    button
+                        [ class "role-modifier"
+                        , onClick (Act p a)
+                        ]
+                        [ text (toString a) ]
+                )
                 p.role.actions
 
         isVisiting =
@@ -81,7 +94,8 @@ playerItem model p =
                         []
                    )
     in
-        li []
+        li
+            [ class "role-item" ]
             [ div []
                 ([ span
                     attrs
@@ -94,8 +108,9 @@ playerItem model p =
 
 showVisited : Model -> Html Msg
 showVisited model =
-    ul [] <|
-        List.concatMap
+    ul
+        [ class "role-list" ]
+        (List.concatMap
             (\( id, l ) ->
                 List.map
                     (\( s, a ) ->
@@ -111,6 +126,7 @@ showVisited model =
                     l
             )
             (Dict.toList model.visited)
+        )
 
 
 viewNight : Model -> Html Msg
