@@ -56,10 +56,10 @@ viewCreate model =
 playerItem : Model -> Player -> Html Msg
 playerItem model p =
     let
-        actBtns acts =
+        actBtns =
             List.map
                 (\a -> button [ onClick (Act p a) ] [ text (toString a) ])
-                acts
+                p.role.actions
 
         isVisiting =
             case model.visiting of
@@ -71,21 +71,19 @@ playerItem model p =
 
         attrs =
             onClick (Visit p)
-                :: if isVisiting then
-                    [ style [ ( "color", "red" ) ] ]
-                   else
-                    []
+                :: (if isVisiting then
+                        [ style [ ( "color", "red" ) ] ]
+                    else
+                        []
+                   )
     in
         li []
             [ div []
-                ([ span attrs
-                    [ text <|
-                        (toString p.id)
-                            ++ " "
-                            ++ p.role.name
-                    ]
+                ([ span
+                    attrs
+                    [ text <| (toString p.id) ++ " " ++ p.role.name ]
                  ]
-                    ++ actBtns p.role.actions
+                    ++ actBtns
                 )
             ]
 
