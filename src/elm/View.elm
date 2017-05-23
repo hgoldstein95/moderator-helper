@@ -4,6 +4,13 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Dict exposing (Dict)
+import Material.Scheme
+import Material.Chip as Chip
+import Material.Button as Button
+import Material.Options as Options
+import Material.Color as Color
+import Material.List as Lists
+import Material.Icon as Icon
 import Model exposing (..)
 import Update exposing (..)
 import Mafia exposing (..)
@@ -13,7 +20,7 @@ view : Model -> Html Msg
 view model =
     div
         [ style
-            [ ( "width", "600px" )
+            [ ( "max-width", "600px" )
             , ( "margin", "100px auto" )
             , ( "font-family", "sans-serif" )
             ]
@@ -32,24 +39,35 @@ view model =
             End ->
                 viewEnd model
         ]
+        |> Material.Scheme.topWithScheme Color.Teal Color.Red
 
 
 roleInput : Model -> Role -> Html Msg
 roleInput model role =
-    ul
-        [ class "role-list" ]
-        [ li
-            [ class "role-item" ]
-            [ text role.name
-            , span
-                [ class "role-modifier" ]
-                [ button [ onClick (IncRole role) ] [ text "+" ]
-                , span []
-                    [ Maybe.withDefault 0 (Dict.get role.name model.setup)
+    Lists.ul
+        []
+        [ Lists.li [ Lists.withSubtitle ]
+            [ Lists.content []
+                [ text role.name
+                , Lists.subtitle []
+                    [ Maybe.withDefault
+                        0
+                        (Dict.get role.name model.setup)
                         |> toString
                         |> text
                     ]
-                , button [ onClick (DecRole role) ] [ text "-" ]
+                ]
+            , Lists.content2 []
+                [ Button.render Mdl
+                    []
+                    model.mdl
+                    [ Options.onClick (IncRole role) ]
+                    [ Icon.i "keyboard_arrow_up" ]
+                , Button.render Mdl
+                    []
+                    model.mdl
+                    [ Options.onClick (DecRole role) ]
+                    [ Icon.i "keyboard_arrow_down" ]
                 ]
             ]
         ]
@@ -60,7 +78,11 @@ viewCreate model =
     div []
         [ h2 [] [ text "Create" ]
         , div [] (List.map (roleInput model) (Dict.values roles))
-        , button [ onClick Start ] [ text "Start game!" ]
+        , Button.render Mdl
+            []
+            model.mdl
+            [ Button.colored, Button.raised, Options.onClick Start ]
+            [ text "Start" ]
         ]
 
 

@@ -1,6 +1,7 @@
 module Model exposing (..)
 
 import Dict exposing (Dict)
+import Material
 
 
 type ViewState
@@ -41,6 +42,7 @@ type Outcome
 
 type alias Model =
     { uid : Int
+    , mdl : Material.Model
     , state : ViewState
     , setup : Dict String Int
     , players : Dict Int Player
@@ -54,6 +56,7 @@ init : ( Model, Cmd msg )
 init =
     ( Model
         0
+        Material.model
         Create
         Dict.empty
         Dict.empty

@@ -1,12 +1,14 @@
 module Update exposing (..)
 
 import Dict exposing (Dict)
+import Material
 import Model exposing (..)
 import Mafia exposing (..)
 
 
 type Msg
     = Reset
+    | Mdl (Material.Msg Msg)
     | Start
     | ToNight
     | ToDay
@@ -72,6 +74,9 @@ update msg model =
     case msg of
         Reset ->
             init
+
+        Mdl msg ->
+            Material.update Mdl msg model
 
         Start ->
             ( { model
