@@ -24,26 +24,23 @@ incrRole role d =
     if role.unique then
         Dict.insert role.name 1 d
     else
-        let
-            count =
-                Maybe.withDefault 0 (Dict.get role.name d)
-        in
-            Dict.insert role.name (count + 1) d
+        Dict.update role.name (\v -> Just <| (Maybe.withDefault 0 v) + 1) d
 
 
 decrRole : Role -> Dict String Int -> Dict String Int
 decrRole role d =
-    let
-        count =
-            Maybe.withDefault 0 (Dict.get role.name d)
-
-        newVal =
-            if count <= 0 then
-                0
-            else
-                count - 1
-    in
-        Dict.insert role.name newVal d
+    Dict.update role.name
+        (\v ->
+            let
+                c =
+                    Maybe.withDefault 0 v
+            in
+                if c <= 0 then
+                    Just 0
+                else
+                    Just (c - 1)
+        )
+        d
 
 
 makePlayers : Dict String Int -> Dict Int Player
@@ -62,11 +59,9 @@ addVisit :
     -> Dict Int (List ( Player, Action ))
     -> Dict Int (List ( Player, Action ))
 addVisit t s act v =
-    let
-        curr =
-            Maybe.withDefault [] (Dict.get t.id v)
-    in
-        Dict.insert t.id (( s, act ) :: curr) v
+    Dict.update t.id
+        (\curr -> ( s, act ) :: (Maybe.withDefault [] curr) |> Just)
+        v
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
