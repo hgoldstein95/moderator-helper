@@ -44,6 +44,14 @@ view model =
         |> Material.Scheme.topWithScheme Color.DeepOrange Color.Blue
 
 
+displayPlayer : Player -> String
+displayPlayer p =
+    if p.name /= "" then
+        String.join "" [ (toString p.role), " (", p.name, ")" ]
+    else
+        (toString p.role)
+
+
 addRoleButton : Model -> Role -> Html Msg
 addRoleButton model role =
     Button.render Mdl
@@ -68,7 +76,10 @@ roleItem model p =
             , Textfield.render Mdl
                 [ p.id ]
                 model.mdl
-                [ Options.onInput (UpdatePlayerName p) ]
+                [ Options.onInput (UpdatePlayerName p)
+                , Textfield.value p.name
+                , Textfield.label "Name"
+                ]
                 []
             ]
         , Lists.content2
@@ -117,23 +128,12 @@ makeActBtn model p a =
 
 playerItem : Model -> Player -> Html Msg
 playerItem model p =
-    let
-        info =
-            roleInfo p.role
-    in
-        Lists.li
-            [ Options.onClick (Visit p) ]
-            [ Lists.content []
-                [ span []
-                    [ text <|
-                        if p.name /= "" then
-                            String.join "" [ info.name, " (", p.name, ")" ]
-                        else
-                            info.name
-                    ]
-                ]
-            , Lists.content2 [] (List.map (makeActBtn model p) info.actions)
-            ]
+    Lists.li
+        [ Options.onClick (Visit p) ]
+        [ Lists.content [] [ span [] [ text (displayPlayer p) ] ]
+        , Lists.content2 []
+            (List.map (makeActBtn model p) (roleInfo p.role).actions)
+        ]
 
 
 viewNight : Model -> Html Msg
