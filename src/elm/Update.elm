@@ -44,7 +44,7 @@ update msg model =
         AddPlayer role ->
             ( { model
                 | uid = model.uid + 1
-                , players = model.players ++ [ Player model.uid role "" ]
+                , players = model.players ++ [ Player model.uid role "" True ]
               }
             , Cmd.none
             )

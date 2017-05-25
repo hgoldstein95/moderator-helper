@@ -31,6 +31,7 @@ type alias Player =
     { id : Int
     , role : Role
     , name : String
+    , alive : Bool
     }
 
 
