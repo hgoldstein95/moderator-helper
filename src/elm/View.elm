@@ -12,6 +12,7 @@ import Material.Color as Color
 import Material.List as Lists
 import Material.Typography as Typo
 import Material.Icon as Icon
+import Material.Textfield as Textfield
 import Model exposing (..)
 import Update exposing (..)
 import Mafia exposing (..)
@@ -56,11 +57,20 @@ addRoleButton model role =
         [ text (toString role) ]
 
 
-roleItem : Player -> Html Msg
-roleItem p =
+roleItem : Model -> Player -> Html Msg
+roleItem model p =
     Lists.li
         []
-        [ Lists.content [] [ text (toString p.role) ]
+        [ Lists.content []
+            [ Options.span
+                [ Options.css "margin-right" "20px" ]
+                [ text (toString p.role) ]
+            , Textfield.render Mdl
+                [ p.id ]
+                model.mdl
+                [ Options.onInput (UpdatePlayerName p) ]
+                []
+            ]
         , Lists.content2
             [ Options.onClick (RemovePlayer p) ]
             [ Icon.i "close" ]
@@ -72,7 +82,7 @@ viewCreate model =
     Options.div []
         [ Options.styled p [ Typo.display2 ] [ text "Create a Setup" ]
         , Options.div [] (List.map (addRoleButton model) model.roles)
-        , Lists.ul [] (List.map roleItem model.setup)
+        , Lists.ul [] (List.map (roleItem model) model.players)
         , Button.render Mdl
             []
             model.mdl
@@ -114,7 +124,14 @@ playerItem model p =
         Lists.li
             [ Options.onClick (Visit p) ]
             [ Lists.content []
-                [ span [] [ text <| (toString p.id) ++ " " ++ info.name ] ]
+                [ span []
+                    [ text <|
+                        if p.name /= "" then
+                            String.join "" [ info.name, " (", p.name, ")" ]
+                        else
+                            info.name
+                    ]
+                ]
             , Lists.content2 [] (List.map (makeActBtn model p) info.actions)
             ]
 
@@ -123,7 +140,7 @@ viewNight : Model -> Html Msg
 viewNight model =
     div []
         [ Options.styled p [ Typo.display2 ] [ text "Night Round" ]
-        , Lists.ul [] (List.map (playerItem model) (Dict.values model.players))
+        , Lists.ul [] (List.map (playerItem model) model.players)
         , Button.render Mdl
             []
             model.mdl
@@ -146,9 +163,21 @@ viewNight model =
 viewDay : Model -> Html Msg
 viewDay model =
     div []
-        [ h2 [] [ text "Day" ]
-        , button [ onClick ToNight ] [ text "Go to sleep." ]
-        , button [ onClick EndGame ] [ text "Game Over" ]
+        [ Options.styled p [ Typo.display2 ] [ text "Day Round" ]
+        , Button.render Mdl
+            []
+            model.mdl
+            [ Options.onClick ToNight
+            , Button.primary
+            , Button.raised
+            , Options.css "margin-right" "20px"
+            ]
+            [ text "Go to Sleep" ]
+        , Button.render Mdl
+            []
+            model.mdl
+            [ Options.onClick EndGame, Button.accent, Button.raised ]
+            [ text "Game Over" ]
         , h3 [] [ text "Announcements" ]
         , ul []
             (model.announcements
@@ -160,6 +189,10 @@ viewDay model =
 viewEnd : Model -> Html Msg
 viewEnd model =
     div []
-        [ h2 [] [ text "End" ]
-        , button [ onClick Reset ] [ text "New game." ]
+        [ Options.styled p [ Typo.display2 ] [ text "Game Over" ]
+        , Button.render Mdl
+            []
+            model.mdl
+            [ Options.onClick Reset, Button.primary, Button.raised ]
+            [ text "New Game" ]
         ]

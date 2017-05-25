@@ -30,6 +30,7 @@ type ViewState
 type alias Player =
     { id : Int
     , role : Role
+    , name : String
     }
 
 
@@ -53,8 +54,7 @@ type alias Model =
     , roles : List Role
     , mdl : Material.Model
     , state : ViewState
-    , setup : List Player
-    , players : Dict Int Player
+    , players : List Player
     , visiting : Maybe ( Player, Action )
     , visited : Dict Int (List ( Player, Action ))
     , announcements : List Outcome
@@ -74,7 +74,6 @@ init =
         Material.model
         Create
         []
-        Dict.empty
         Nothing
         Dict.empty
         []

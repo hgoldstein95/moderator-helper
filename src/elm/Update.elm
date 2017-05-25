@@ -10,6 +10,7 @@ type Msg
     = Reset
     | Mdl (Material.Msg Msg)
     | AddPlayer Role
+    | UpdatePlayerName Player String
     | RemovePlayer Player
     | Start
     | ToNight
@@ -43,28 +44,35 @@ update msg model =
         AddPlayer role ->
             ( { model
                 | uid = model.uid + 1
-                , setup = model.setup ++ [ Player model.uid role ]
+                , players = model.players ++ [ Player model.uid role "" ]
+              }
+            , Cmd.none
+            )
+
+        UpdatePlayerName player name ->
+            ( { model
+                | players =
+                    List.map
+                        (\p ->
+                            if p.id == player.id then
+                                { p | name = name }
+                            else
+                                p
+                        )
+                        model.players
               }
             , Cmd.none
             )
 
         RemovePlayer player ->
             ( { model
-                | setup = List.filter (\p -> p.id /= player.id) model.setup
+                | players = List.filter (\p -> p.id /= player.id) model.players
               }
             , Cmd.none
             )
 
         Start ->
-            ( { model
-                | state = Night
-                , setup = []
-                , players =
-                    List.map (\p -> ( p.id, p )) model.setup
-                        |> Dict.fromList
-              }
-            , Cmd.none
-            )
+            ( { model | state = Night }, Cmd.none )
 
         ToNight ->
             ( { model

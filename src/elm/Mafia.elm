@@ -24,7 +24,7 @@ roleInfo role =
 
 
 getOutcomes :
-    Dict Int Player
+    List Player
     -> Dict Int (List ( Player, Action ))
     -> List Outcome
 getOutcomes players visits =
@@ -35,11 +35,11 @@ getOutcomes players visits =
                     acts =
                         List.map Tuple.second vs
                 in
-                    if
-                        List.member Kill acts
-                            && not (List.member Save acts)
-                    then
-                        Maybe.map Dead (Dict.get id players)
+                    if List.member Kill acts && not (List.member Save acts) then
+                        players
+                            |> List.filter (\p -> p.id == id)
+                            |> List.head
+                            |> Maybe.map Dead
                     else
                         Nothing
             )
