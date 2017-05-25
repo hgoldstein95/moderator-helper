@@ -9,47 +9,14 @@ import Mafia exposing (..)
 type Msg
     = Reset
     | Mdl (Material.Msg Msg)
+    | AddPlayer Role
+    | RemovePlayer Player
     | Start
     | ToNight
     | ToDay
     | EndGame
-    | IncRole Role
-    | DecRole Role
     | Act Player Action
     | Visit Player
-
-
-incrRole : Role -> Dict String Int -> Dict String Int
-incrRole role d =
-    if role.unique then
-        Dict.insert role.name 1 d
-    else
-        Dict.update role.name (\v -> Just <| (Maybe.withDefault 0 v) + 1) d
-
-
-decrRole : Role -> Dict String Int -> Dict String Int
-decrRole role d =
-    Dict.update role.name
-        (\v ->
-            let
-                c =
-                    Maybe.withDefault 0 v
-            in
-                if c <= 0 then
-                    Just 0
-                else
-                    Just (c - 1)
-        )
-        d
-
-
-makePlayers : Dict String Int -> Dict Int Player
-makePlayers d =
-    Dict.toList d
-        |> List.concatMap (\( r, n ) -> List.repeat n r)
-        |> List.filterMap (\r -> Dict.get r roles)
-        |> List.indexedMap (\i x -> ( i, Player i x ))
-        |> Dict.fromList
 
 
 addVisit :
@@ -73,11 +40,28 @@ update msg model =
         Mdl msg ->
             Material.update Mdl msg model
 
+        AddPlayer role ->
+            ( { model
+                | uid = model.uid + 1
+                , setup = model.setup ++ [ Player model.uid role ]
+              }
+            , Cmd.none
+            )
+
+        RemovePlayer player ->
+            ( { model
+                | setup = List.filter (\p -> p.id /= player.id) model.setup
+              }
+            , Cmd.none
+            )
+
         Start ->
             ( { model
                 | state = Night
-                , setup = Dict.empty
-                , players = makePlayers model.setup
+                , setup = []
+                , players =
+                    List.map (\p -> ( p.id, p )) model.setup
+                        |> Dict.fromList
               }
             , Cmd.none
             )
@@ -101,16 +85,6 @@ update msg model =
 
         EndGame ->
             ( { model | state = End }, Cmd.none )
-
-        IncRole role ->
-            ( { model | setup = incrRole role model.setup }
-            , Cmd.none
-            )
-
-        DecRole role ->
-            ( { model | setup = decrRole role model.setup }
-            , Cmd.none
-            )
 
         Act player action ->
             ( case model.visiting of

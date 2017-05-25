@@ -10,8 +10,8 @@ import Material.Button as Button
 import Material.Options as Options
 import Material.Color as Color
 import Material.List as Lists
-import Material.Icon as Icon
 import Material.Typography as Typo
+import Material.Icon as Icon
 import Model exposing (..)
 import Update exposing (..)
 import Mafia exposing (..)
@@ -40,37 +40,30 @@ view model =
             End ->
                 viewEnd model
         ]
-        |> Material.Scheme.topWithScheme Color.Teal Color.Red
+        |> Material.Scheme.topWithScheme Color.DeepOrange Color.Blue
 
 
-roleInput : Model -> Role -> Html Msg
-roleInput model role =
-    Lists.ul
+addRoleButton : Model -> Role -> Html Msg
+addRoleButton model role =
+    Button.render Mdl
         []
-        [ Lists.li [ Lists.withSubtitle ]
-            [ Lists.content []
-                [ text role.name
-                , Lists.subtitle []
-                    [ Maybe.withDefault
-                        0
-                        (Dict.get role.name model.setup)
-                        |> toString
-                        |> text
-                    ]
-                ]
-            , Lists.content2 []
-                [ Button.render Mdl
-                    []
-                    model.mdl
-                    [ Options.onClick (IncRole role) ]
-                    [ Icon.i "keyboard_arrow_up" ]
-                , Button.render Mdl
-                    []
-                    model.mdl
-                    [ Options.onClick (DecRole role) ]
-                    [ Icon.i "keyboard_arrow_down" ]
-                ]
-            ]
+        model.mdl
+        [ Options.css "margin" "0 20px 10px 0"
+        , Button.accent
+        , Button.raised
+        , Options.onClick (AddPlayer role)
+        ]
+        [ text (toString role) ]
+
+
+roleItem : Player -> Html Msg
+roleItem p =
+    Lists.li
+        []
+        [ Lists.content [] [ text (toString p.role) ]
+        , Lists.content2
+            [ Options.onClick (RemovePlayer p) ]
+            [ Icon.i "close" ]
         ]
 
 
@@ -78,7 +71,8 @@ viewCreate : Model -> Html Msg
 viewCreate model =
     Options.div []
         [ Options.styled p [ Typo.display2 ] [ text "Create a Setup" ]
-        , Options.div [] (List.map (roleInput model) (Dict.values roles))
+        , Options.div [] (List.map (addRoleButton model) model.roles)
+        , Lists.ul [] (List.map roleItem model.setup)
         , Button.render Mdl
             []
             model.mdl
@@ -113,12 +107,16 @@ makeActBtn model p a =
 
 playerItem : Model -> Player -> Html Msg
 playerItem model p =
-    Lists.li
-        [ Options.onClick (Visit p) ]
-        [ Lists.content []
-            [ span [] [ text <| (toString p.id) ++ " " ++ p.role.name ] ]
-        , Lists.content2 [] (List.map (makeActBtn model p) p.role.actions)
-        ]
+    let
+        info =
+            roleInfo p.role
+    in
+        Lists.li
+            [ Options.onClick (Visit p) ]
+            [ Lists.content []
+                [ span [] [ text <| (toString p.id) ++ " " ++ info.name ] ]
+            , Lists.content2 [] (List.map (makeActBtn model p) info.actions)
+            ]
 
 
 viewNight : Model -> Html Msg
@@ -140,6 +138,8 @@ viewNight model =
             model.mdl
             [ Options.onClick EndGame, Button.accent, Button.raised ]
             [ text "Game Over" ]
+        , Options.div [] [ text (toString model.visiting) ]
+        , Options.div [] [ text (toString model.visited) ]
         ]
 
 

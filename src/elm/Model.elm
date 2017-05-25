@@ -4,6 +4,22 @@ import Dict exposing (Dict)
 import Material
 
 
+type Role
+    = Townie
+    | Sheriff
+    | Doctor
+    | Mafia
+    | Godfather
+
+
+type alias RoleInfo =
+    { name : String
+    , unique : Bool
+    , alignment : Alignment
+    , actions : List Action
+    }
+
+
 type ViewState
     = Create
     | Night
@@ -28,23 +44,16 @@ type Action
     | Check
 
 
-type alias Role =
-    { name : String
-    , unique : Bool
-    , alignment : Alignment
-    , actions : List Action
-    }
-
-
 type Outcome
     = Dead Player
 
 
 type alias Model =
     { uid : Int
+    , roles : List Role
     , mdl : Material.Model
     , state : ViewState
-    , setup : Dict String Int
+    , setup : List Player
     , players : Dict Int Player
     , visiting : Maybe ( Player, Action )
     , visited : Dict Int (List ( Player, Action ))
@@ -52,13 +61,19 @@ type alias Model =
     }
 
 
+tier1 : List Role
+tier1 =
+    [ Townie, Sheriff, Doctor, Mafia, Godfather ]
+
+
 init : ( Model, Cmd msg )
 init =
     ( Model
         0
+        tier1
         Material.model
         Create
-        Dict.empty
+        []
         Dict.empty
         Nothing
         Dict.empty

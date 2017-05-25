@@ -4,14 +4,23 @@ import Dict exposing (Dict)
 import Model exposing (..)
 
 
-roles : Dict String Role
-roles =
-    Dict.empty
-        |> Dict.insert "Townie" (Role "Townie" False T [])
-        |> Dict.insert "Sheriff" (Role "Sheriff" True T [ Check ])
-        |> Dict.insert "Doctor" (Role "Doctor" True T [ Save ])
-        |> Dict.insert "Mafia" (Role "Mafia" False M [ Kill ])
-        |> Dict.insert "Godfather" (Role "Godfather" True M [ Kill ])
+roleInfo : Role -> RoleInfo
+roleInfo role =
+    case role of
+        Townie ->
+            RoleInfo "Townie" False T []
+
+        Sheriff ->
+            RoleInfo "Sheriff" True T [ Check ]
+
+        Doctor ->
+            RoleInfo "Doctor" True T [ Save ]
+
+        Mafia ->
+            RoleInfo "Mafia" False M [ Kill ]
+
+        Godfather ->
+            RoleInfo "Godfather" True M [ Kill ]
 
 
 getOutcomes :
