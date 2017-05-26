@@ -13,6 +13,8 @@ import Material.List as Lists
 import Material.Typography as Typo
 import Material.Icon as Icon
 import Material.Textfield as Textfield
+import Material.Layout as Layout
+import Material.Grid as Grid
 import Model exposing (..)
 import Update exposing (..)
 import Mafia exposing (..)
@@ -20,27 +22,37 @@ import Mafia exposing (..)
 
 view : Model -> Html Msg
 view model =
-    div
-        [ style
-            [ ( "max-width", "600px" )
-            , ( "margin", "100px auto" )
-            , ( "font-family", "sans-serif" )
+    Layout.render Mdl
+        model.mdl
+        []
+        { header =
+            [ Layout.row [] [ Layout.title [] [ text "Mafia App" ] ] ]
+        , drawer = []
+        , tabs = ( [], [] )
+        , main =
+            [ Grid.grid []
+                [ Grid.cell
+                    [ Grid.offset Grid.Desktop 3
+                    , Grid.size Grid.Desktop 6
+                    , Grid.size Grid.Tablet 12
+                    , Grid.size Grid.Phone 12
+                    ]
+                    [ case model.state of
+                        Create ->
+                            viewCreate model
+
+                        Night ->
+                            viewNight model
+
+                        Day ->
+                            viewDay model
+
+                        End ->
+                            viewEnd model
+                    ]
+                ]
             ]
-        ]
-        [ h1 [] [ text "Mafia App" ]
-        , case model.state of
-            Create ->
-                viewCreate model
-
-            Night ->
-                viewNight model
-
-            Day ->
-                viewDay model
-
-            End ->
-                viewEnd model
-        ]
+        }
         |> Material.Scheme.topWithScheme Color.DeepOrange Color.Blue
 
 
@@ -57,7 +69,7 @@ addRoleButton model role =
     Button.render Mdl
         []
         model.mdl
-        [ Options.css "margin" "0 20px 10px 0"
+        [ Options.css "margin" "0 20px 20px 0"
         , Button.accent
         , Button.raised
         , Options.onClick (AddPlayer role)
