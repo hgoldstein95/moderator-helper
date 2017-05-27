@@ -20,18 +20,6 @@ type Msg
     | Visit Player
 
 
-addVisit :
-    Player
-    -> Player
-    -> Action
-    -> Dict Int (List ( Player, Action ))
-    -> Dict Int (List ( Player, Action ))
-addVisit t s act v =
-    Dict.update t.id
-        (\curr -> ( s, act ) :: (Maybe.withDefault [] curr) |> Just)
-        v
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -44,7 +32,14 @@ update msg model =
         AddPlayer role ->
             ( { model
                 | uid = model.uid + 1
-                , players = model.players ++ [ Player model.uid role "" True ]
+                , players =
+                    model.players
+                        ++ [ { id = model.uid
+                             , role = role
+                             , name = ""
+                             , alive = True
+                             }
+                           ]
               }
             , Cmd.none
             )
@@ -53,11 +48,11 @@ update msg model =
             ( { model
                 | players =
                     List.map
-                        (\p ->
-                            if p.id == player.id then
-                                { p | name = name }
+                        (\other ->
+                            if other.id == player.id then
+                                { other | name = name }
                             else
-                                p
+                                other
                         )
                         model.players
               }
@@ -107,15 +102,22 @@ update msg model =
             , Cmd.none
             )
 
-        Visit player ->
+        Visit target ->
             ( case model.visiting of
                 Nothing ->
                     model
 
-                Just ( p, act ) ->
+                Just ( source, act ) ->
                     { model
                         | visiting = Nothing
-                        , visited = addVisit player p act model.visited
+                        , visited =
+                            Dict.update target.id
+                                (\curr ->
+                                    ( source, act )
+                                        :: Maybe.withDefault [] curr
+                                        |> Just
+                                )
+                                model.visited
                     }
             , Cmd.none
             )

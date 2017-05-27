@@ -69,14 +69,14 @@ tier1 =
 
 init : ( Model, Cmd msg )
 init =
-    ( Model
-        0
-        tier1
-        Material.model
-        Create
-        []
-        Nothing
-        Dict.empty
-        []
+    ( { uid = 0
+      , roles = tier1
+      , mdl = Material.model
+      , state = Create
+      , players = []
+      , visiting = Nothing
+      , visited = Dict.empty
+      , announcements = []
+      }
     , Cmd.none
     )
