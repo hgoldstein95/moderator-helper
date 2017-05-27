@@ -60,8 +60,10 @@ displayPlayer : Player -> String
 displayPlayer p =
     if p.name /= "" then
         String.join "" [ (toString p.role), " (", p.name, ")" ]
+    else if not (roleInfo p.role).unique then
+        String.join "" [ (toString p.role), " (", (toString p.id), ")" ]
     else
-        (toString p.role)
+        toString p.role
 
 
 addRoleButton : Model -> Role -> Html Msg
@@ -69,10 +71,15 @@ addRoleButton model role =
     Button.render Mdl
         []
         model.mdl
-        [ Options.css "margin" "0 20px 20px 0"
-        , Button.accent
+        [ Button.accent
         , Button.raised
         , Options.onClick (AddPlayer role)
+        , Options.css "margin" "0 20px 20px 0"
+        , Options.when
+            ((roleInfo role).unique
+                && List.any (\p -> p.role == role) model.players
+            )
+            Button.disabled
         ]
         [ text (toString role) ]
 
