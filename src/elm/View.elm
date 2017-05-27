@@ -71,11 +71,11 @@ addRoleButton model role =
         , Button.raised
         , Options.onClick (AddPlayer role)
         , Options.css "margin" "0 20px 20px 0"
-        , Options.when
-            ((roleInfo role).unique
-                && List.any (\p -> p.role == role) model.players
-            )
-            Button.disabled
+        , Button.disabled
+            |> Options.when
+                ((roleInfo role).unique
+                    && List.any (\p -> p.role == role) model.players
+                )
         ]
         [ text (toString role) ]
 
@@ -128,15 +128,12 @@ makeActBtn model p a =
             , preventDefault = False
             }
             (Json.succeed (Act p a))
-        , case model.visiting of
-            Nothing ->
-                Options.nop
-
-            Just ( play, act ) ->
-                if p.id == play.id && act == a then
-                    Button.colored
-                else
-                    Options.nop
+        , Button.colored
+            |> Options.when
+                (model.visiting
+                    |> Maybe.map (\( play, act ) -> p.id == play.id && act == a)
+                    |> Maybe.withDefault False
+                )
         ]
         [ text (toString a) ]
 
