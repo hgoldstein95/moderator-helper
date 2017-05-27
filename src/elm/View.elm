@@ -172,6 +172,14 @@ viewNight model =
         ]
 
 
+announcementItem : Outcome -> Html Msg
+announcementItem x =
+    case x of
+        Dead p ->
+            Lists.li []
+                [ Lists.content [] [ text (displayPlayer p ++ " is dead.") ] ]
+
+
 viewDay : Model -> Html Msg
 viewDay model =
     Options.div []
@@ -193,7 +201,7 @@ viewDay model =
         , Html.h3 [] [ text "Announcements" ]
         , Lists.ul []
             (List.map
-                (\x -> Lists.li [] [ Lists.content [] [ text (toString x) ] ])
+                announcementItem
                 model.announcements
             )
         ]
