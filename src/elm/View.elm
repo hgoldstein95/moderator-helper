@@ -1,16 +1,12 @@
 module View exposing (..)
 
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Html exposing (Html, text)
 import Json.Decode as Json
-import Dict exposing (Dict)
 import Material.Scheme
 import Material.Button as Button
 import Material.Options as Options
 import Material.Color as Color
 import Material.List as Lists
-import Material.Typography as Typo
 import Material.Icon as Icon
 import Material.Textfield as Textfield
 import Material.Layout as Layout
@@ -110,7 +106,7 @@ roleItem model p =
 viewCreate : Model -> Html Msg
 viewCreate model =
     Options.div []
-        [ Options.styled p [ Typo.display2 ] [ text "Create a Setup" ]
+        [ Html.h2 [] [ text "Create a Setup" ]
         , Options.div [] (List.map (addRoleButton model) model.roles)
         , Lists.ul [] (List.map (roleItem model) model.players)
         , Button.render Mdl
@@ -149,7 +145,7 @@ playerItem : Model -> Player -> Html Msg
 playerItem model p =
     Lists.li
         [ Options.onClick (Visit p) ]
-        [ Lists.content [] [ span [] [ text (displayPlayer p) ] ]
+        [ Lists.content [] [ Options.span [] [ text (displayPlayer p) ] ]
         , Lists.content2 []
             (List.map (makeActBtn model p) (roleInfo p.role).actions)
         ]
@@ -157,8 +153,8 @@ playerItem model p =
 
 viewNight : Model -> Html Msg
 viewNight model =
-    div []
-        [ Options.styled p [ Typo.display2 ] [ text "Night Round" ]
+    Options.div []
+        [ Html.h2 [] [ text "Night Round" ]
         , Lists.ul [] (List.map (playerItem model) model.players)
         , Button.render Mdl
             []
@@ -181,8 +177,8 @@ viewNight model =
 
 viewDay : Model -> Html Msg
 viewDay model =
-    div []
-        [ Options.styled p [ Typo.display2 ] [ text "Day Round" ]
+    Options.div []
+        [ Html.h2 [] [ text "Day Round" ]
         , Button.render Mdl
             []
             model.mdl
@@ -197,18 +193,19 @@ viewDay model =
             model.mdl
             [ Options.onClick EndGame, Button.accent, Button.raised ]
             [ text "Game Over" ]
-        , h3 [] [ text "Announcements" ]
-        , ul []
-            (model.announcements
-                |> List.map (\x -> li [] [ text (toString x) ])
+        , Html.h3 [] [ text "Announcements" ]
+        , Lists.ul []
+            (List.map
+                (\x -> Lists.li [] [ Lists.content [] [ text (toString x) ] ])
+                model.announcements
             )
         ]
 
 
 viewEnd : Model -> Html Msg
 viewEnd model =
-    div []
-        [ Options.styled p [ Typo.display2 ] [ text "Game Over" ]
+    Options.div []
+        [ Html.h2 [] [ text "Game Over" ]
         , Button.render Mdl
             []
             model.mdl
