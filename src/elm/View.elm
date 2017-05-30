@@ -1,6 +1,7 @@
 module View exposing (..)
 
 import Html exposing (Html, text)
+import Dict exposing (Dict)
 import Json.Decode as Json
 import Material.Scheme
 import Material.Button as Button
@@ -11,6 +12,7 @@ import Material.Icon as Icon
 import Material.Textfield as Textfield
 import Material.Layout as Layout
 import Material.Grid as Grid
+import Material.Typography as Typo
 import Model exposing (..)
 import Update exposing (..)
 import Mafia exposing (..)
@@ -148,11 +150,45 @@ playerItem model p =
         ]
 
 
+visitItem : Player -> Player -> Action -> Html Msg
+visitItem currPlayer otherPlayer act =
+    Lists.li [ Lists.withSubtitle ]
+        [ Lists.content []
+            [ Options.span
+                [ Options.css "margin-right" "10px" ]
+                [ displayPlayer otherPlayer
+                    ++ " visits "
+                    ++ (displayPlayer currPlayer)
+                    |> text
+                ]
+            , Lists.subtitle [] [ text (toString act) ]
+            ]
+        , Lists.content2
+            [ Options.onClick (RemoveVisit currPlayer otherPlayer act) ]
+            [ Icon.i "close" ]
+        ]
+
+
+visitedItem : Model -> ( Int, List ( Player, Action ) ) -> List (Html Msg)
+visitedItem model ( id, acts ) =
+    model.players
+        |> List.filter (\x -> x.id == id)
+        |> List.head
+        |> Maybe.map (\c -> List.map (\( o, a ) -> visitItem c o a) acts)
+        |> Maybe.withDefault []
+
+
 viewNight : Model -> Html Msg
 viewNight model =
     Options.div []
         [ Html.h2 [] [ text "Night Round" ]
         , Lists.ul [] (List.map (playerItem model) model.players)
+        , Html.hr [] []
+        , Lists.ul []
+            (model.visited
+                |> Dict.toList
+                |> List.concatMap (visitedItem model)
+            )
         , Button.render Mdl
             []
             model.mdl
@@ -167,8 +203,6 @@ viewNight model =
             model.mdl
             [ Options.onClick EndGame, Button.accent, Button.raised ]
             [ text "Game Over" ]
-        , Options.div [] [ text (toString model.visiting) ]
-        , Options.div [] [ text (toString model.visited) ]
         ]
 
 

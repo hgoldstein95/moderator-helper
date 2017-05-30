@@ -18,6 +18,7 @@ type Msg
     | EndGame
     | Act Player Action
     | Visit Player
+    | RemoveVisit Player Player Action
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -119,5 +120,18 @@ update msg model =
                                 )
                                 model.visited
                     }
+            , Cmd.none
+            )
+
+        RemoveVisit t s a ->
+            ( { model
+                | visited =
+                    model.visited
+                        |> Dict.update t.id
+                            ((\( p, act ) -> p.id /= s.id || a /= act)
+                                |> List.filter
+                                |> Maybe.map
+                            )
+              }
             , Cmd.none
             )
