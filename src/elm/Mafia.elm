@@ -8,19 +8,39 @@ roleInfo : Role -> RoleInfo
 roleInfo role =
     case role of
         Townie ->
-            RoleInfo "Townie" False T []
+            { name = "Townie"
+            , unique = False
+            , alignment = T
+            , actions = []
+            }
 
         Sheriff ->
-            RoleInfo "Sheriff" True T [ Check ]
+            { name = "Sheriff"
+            , unique = True
+            , alignment = T
+            , actions = [ Check ]
+            }
 
         Doctor ->
-            RoleInfo "Doctor" True T [ Save ]
+            { name = "Doctor"
+            , unique = True
+            , alignment = T
+            , actions = [ Save ]
+            }
 
         Mafia ->
-            RoleInfo "Mafia" False M [ Kill ]
+            { name = "Mafia"
+            , unique = False
+            , alignment = M
+            , actions = [ Kill ]
+            }
 
         Godfather ->
-            RoleInfo "Godfather" True M [ Kill ]
+            { name = "Godfather"
+            , unique = True
+            , alignment = M
+            , actions = [ Kill ]
+            }
 
 
 getOutcomes :
