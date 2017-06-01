@@ -12,7 +12,6 @@ import Material.Icon as Icon
 import Material.Textfield as Textfield
 import Material.Layout as Layout
 import Material.Grid as Grid
-import Material.Typography as Typo
 import Model exposing (..)
 import Update exposing (..)
 import Mafia exposing (..)
