@@ -8,6 +8,7 @@ type Role
     = Townie
     | Sheriff
     | Doctor
+    | Milkman
     | Mafia
     | Godfather
 
@@ -43,10 +44,12 @@ type Action
     = Kill
     | Save
     | Check
+    | GiveMilk
 
 
 type Outcome
     = Dead Player
+    | GotMilk Player
 
 
 type alias Model =
@@ -63,7 +66,7 @@ type alias Model =
 
 tier1 : List Role
 tier1 =
-    [ Townie, Sheriff, Doctor, Mafia, Godfather ]
+    [ Townie, Sheriff, Doctor, Milkman, Mafia, Godfather ]
 
 
 init : ( Model, Cmd msg )

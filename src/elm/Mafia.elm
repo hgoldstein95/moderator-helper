@@ -25,6 +25,12 @@ roleInfo role =
             , actions = [ Save ]
             }
 
+        Milkman ->
+            { unique = True
+            , alignment = T
+            , actions = [ GiveMilk ]
+            }
+
         Mafia ->
             { unique = False
             , alignment = M
@@ -38,6 +44,20 @@ roleInfo role =
             }
 
 
+playerOutcomes : List Action -> Player -> List Outcome
+playerOutcomes acts player =
+    List.concat
+        [ if List.member Kill acts && not (List.member Save acts) then
+            [ Dead player ]
+          else
+            []
+        , if List.member GiveMilk acts then
+            [ GotMilk player ]
+          else
+            []
+        ]
+
+
 getOutcomes :
     List Player
     -> Dict Int (List ( Player, Action ))
@@ -46,15 +66,9 @@ getOutcomes players visits =
     Dict.toList visits
         |> List.filterMap
             (\( id, vs ) ->
-                let
-                    acts =
-                        List.map Tuple.second vs
-                in
-                    if List.member Kill acts && not (List.member Save acts) then
-                        players
-                            |> List.filter (\p -> p.id == id)
-                            |> List.head
-                            |> Maybe.map Dead
-                    else
-                        Nothing
+                players
+                    |> List.filter (\p -> p.id == id)
+                    |> List.head
+                    |> Maybe.map (playerOutcomes (List.map Tuple.second vs))
             )
+        |> List.concat

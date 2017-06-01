@@ -212,6 +212,10 @@ announcementItem x =
             Lists.li []
                 [ Lists.content [] [ text (displayPlayer p ++ " is dead.") ] ]
 
+        GotMilk p ->
+            Lists.li []
+                [ Lists.content [] [ text (displayPlayer p ++ " got milk.") ] ]
+
 
 viewDay : Model -> Html Msg
 viewDay model =
