@@ -8,36 +8,31 @@ roleInfo : Role -> RoleInfo
 roleInfo role =
     case role of
         Townie ->
-            { name = "Townie"
-            , unique = False
+            { unique = False
             , alignment = T
             , actions = []
             }
 
         Sheriff ->
-            { name = "Sheriff"
-            , unique = True
+            { unique = True
             , alignment = T
             , actions = [ Check ]
             }
 
         Doctor ->
-            { name = "Doctor"
-            , unique = True
+            { unique = True
             , alignment = T
             , actions = [ Save ]
             }
 
         Mafia ->
-            { name = "Mafia"
-            , unique = False
+            { unique = False
             , alignment = M
             , actions = [ Kill ]
             }
 
         Godfather ->
-            { name = "Godfather"
-            , unique = True
+            { unique = True
             , alignment = M
             , actions = [ Kill ]
             }

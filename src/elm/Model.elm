@@ -13,8 +13,7 @@ type Role
 
 
 type alias RoleInfo =
-    { name : String
-    , unique : Bool
+    { unique : Bool
     , alignment : Alignment
     , actions : List Action
     }
