@@ -11,36 +11,49 @@ roleInfo role =
             { unique = False
             , alignment = T
             , actions = []
+            , priority = None
             }
 
         Sheriff ->
             { unique = True
             , alignment = T
             , actions = [ Check ]
+            , priority = Low
             }
 
         Doctor ->
             { unique = True
             , alignment = T
             , actions = [ Save ]
+            , priority = Low
             }
 
         Milkman ->
             { unique = True
             , alignment = T
             , actions = [ GiveMilk ]
+            , priority = Low
+            }
+
+        Tracker ->
+            { unique = True
+            , alignment = T
+            , actions = [ Check ]
+            , priority = High
             }
 
         Mafia ->
             { unique = False
             , alignment = M
             , actions = [ Kill ]
+            , priority = Med
             }
 
         Godfather ->
             { unique = True
             , alignment = M
             , actions = [ Kill ]
+            , priority = Med
             }
 
 

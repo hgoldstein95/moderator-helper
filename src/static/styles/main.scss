@@ -1,21 +1,18 @@
-/* .visiting { */
-/*     color: green; */
-/* } */
+.priority {
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    margin-right: 10px;
+}
 
-/* .role-list { */
-/*     margin: 0; */
-/*     padding: 0; */
-/*     list-style: none; */
-/* } */
+.high-priority {
+    background: #cc3232;
+}
 
-/* .role-item { */
-/*     width: 100%; */
-/*     border: 1px solid black; */
-/*     border-radius: 4px; */
-/*     padding: 5px 10px; */
-/*     margin: 10px 0; */
-/* } */
+.med-priority {
+    background: #e7b416;
+}
 
-/* .role-modifier { */
-/*     float: right; */
-/*}*/
+.low-priority {
+    background: #2dc937;
+}

@@ -50,7 +50,7 @@ view model =
                 ]
             ]
         }
-        |> Material.Scheme.topWithScheme Color.DeepOrange Color.Blue
+        |> Material.Scheme.topWithScheme Color.BlueGrey Color.Blue
 
 
 displayPlayer : Player -> String
@@ -61,6 +61,38 @@ displayPlayer p =
         String.join "" [ (toString p.role), " (", (toString p.id), ")" ]
     else
         toString p.role
+
+
+displayAction : Action -> String
+displayAction act =
+    case act of
+        Kill ->
+            "Kill"
+
+        Save ->
+            "Save"
+
+        Check ->
+            "Check"
+
+        GiveMilk ->
+            "Give Milk"
+
+
+priorityClass : Priority -> Options.Property c m
+priorityClass priority =
+    case priority of
+        High ->
+            Options.cs "high-priority"
+
+        Med ->
+            Options.cs "med-priority"
+
+        Low ->
+            Options.cs "low-priority"
+
+        None ->
+            Options.nop
 
 
 addRoleButton : Model -> Role -> Html Msg
@@ -136,14 +168,22 @@ makeActBtn model p a =
                     |> Maybe.withDefault False
                 )
         ]
-        [ text (toString a) ]
+        [ text (displayAction a) ]
 
 
 playerItem : Model -> Player -> Html Msg
 playerItem model p =
     Lists.li
         [ Options.onClick (Visit p) ]
-        [ Lists.content [] [ Options.span [] [ text (displayPlayer p) ] ]
+        [ Lists.content
+            []
+            [ Options.div
+                [ Options.cs "priority"
+                , priorityClass (roleInfo p.role).priority
+                ]
+                []
+            , Options.span [] [ text (displayPlayer p) ]
+            ]
         , Lists.content2 []
             (List.map (makeActBtn model p) (roleInfo p.role).actions)
         ]
@@ -160,7 +200,7 @@ visitItem currPlayer otherPlayer act =
                     ++ (displayPlayer currPlayer)
                     |> text
                 ]
-            , Lists.subtitle [] [ text (toString act) ]
+            , Lists.subtitle [] [ text (displayAction act) ]
             ]
         , Lists.content2
             [ Options.onClick (RemoveVisit currPlayer otherPlayer act) ]

@@ -9,14 +9,23 @@ type Role
     | Sheriff
     | Doctor
     | Milkman
+    | Tracker
     | Mafia
     | Godfather
+
+
+type Priority
+    = High
+    | Med
+    | Low
+    | None
 
 
 type alias RoleInfo =
     { unique : Bool
     , alignment : Alignment
     , actions : List Action
+    , priority : Priority
     }
 
 
@@ -66,7 +75,7 @@ type alias Model =
 
 tier1 : List Role
 tier1 =
-    [ Townie, Sheriff, Doctor, Milkman, Mafia, Godfather ]
+    [ Townie, Sheriff, Doctor, Milkman, Tracker, Mafia, Godfather ]
 
 
 init : ( Model, Cmd msg )
